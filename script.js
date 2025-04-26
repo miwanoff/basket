@@ -43,7 +43,26 @@ function addToCart(e) {
 }
 
 function removeItem(minus) {
-  
+  let cartData = getCartData();
+  if (cartData) {
+    let item = minus.getAttribute("data-id");
+    console.log(item);
+    console.log(cartData[item]);
+    // console.log(cartData[item][2]);
+    cartData[item][2] = cartData[item][2] - 1;
+    // console.log(cartData[item][2]);
+    if (cartData[item][2] == 0) {
+      delete cartData[item];
+    }
+
+    setCartData(cartData);
+    let length = Object.getOwnPropertyNames(cartData);
+    if (length == 0) {
+      clearCart();
+    }
+
+    openCart();
+  }
 }
 
 // Генериурем корзину со списком добавленных товаров
@@ -55,13 +74,13 @@ function openCart(e) {
     let cardTable = "";
     cardTable =
       '<table class="shopping_list"><tr><th>Наименование</th><th>Цена</th><th>Кол-во</th><th>Додати</th><th>Видалити</th></tr>';
-    for (let items in cartData) {
+    for (let item in cartData) {
       cardTable += "<tr>";
-      for (let i = 0; i < cartData[items].length; i++) {
-        cardTable += "<td>" + cartData[items][i] + "</td>";
+      for (let i = 0; i < cartData[item].length; i++) {
+        cardTable += "<td>" + cartData[item][i] + "</td>";
       }
-      cardTable += "<td> + </td>"
-      cardTable += `<td><span class="minus">-</span></td>`
+      cardTable += "<td> + </td>";
+      cardTable += `<td><span class="minus" onclick="removeItem(this)" data-id="${item}">-</span></td>`;
       cardTable += "</tr>";
     }
     cardTable += "<table>";
@@ -73,7 +92,7 @@ function openCart(e) {
 }
 
 // Функция очистки корзины
-function clearCart(e) {
+function clearCart() {
   localStorage.removeItem("cart");
   cartCont.innerHTML = "Кошик очишено.";
 }
